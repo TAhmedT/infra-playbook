@@ -1,1 +1,18 @@
 ---
+- name: System dummy playbook
+  hosts: all
+  gather_facts: yes
+  remote_user: ahmed
+
+
+  roles:
+    - { role: rhel-common, tags: common, when: ansible_os_family == "RedHat" }
+    - { role: ubuntu-common, tags: common, when: ansible_os_family == "Debian" }
+
+- name: System dummy playbook
+  hosts: all
+  gather_facts: yes
+  remote_user: ahmed
+
+  roles:
+    - { role: promerheus, tags: prometheus }

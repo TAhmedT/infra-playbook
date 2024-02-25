@@ -1,0 +1,7 @@
+- name: Upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+    state: latest
+  become: yes
+  become_user: root

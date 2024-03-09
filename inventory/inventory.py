@@ -1,0 +1,87 @@
+#!/usr/bin/python3
+import json, yaml, os, libvirt
+
+class Instance:
+    '''
+    Структура данных для хранения параметров инстанса
+    '''
+    def __init__(self, instance_name: str, hostvars: dict, groups: list):
+        self.instance_name = instance_name
+        self.hostvars = hostvars
+        self.groups = groups
+
+    def get_hostvar(self):
+        return { self.instance_name: self.hostvars }
+
+    def get_instance_name(self):
+        return self.instance_name
+
+    def get_groups(self):
+        return self.groups
+
+def parse_custom_inventory(file_path) -> list[Instance]:
+    '''
+
+    :param file_path: Путь к кастомному инветарю
+    :return: Возвращает список инстансов
+    '''
+    instances = []
+
+    with open(file_path, "r") as file:
+        custom_inventory = yaml.safe_load(file)
+
+        for instance_name in custom_inventory:
+            instances.append(Instance(instance_name, custom_inventory[instance_name]["hostvars"],
+                                      custom_inventory[instance_name]["groups"]))
+
+    return instances
+
+def fill_inventory(inventory: dict, instances: list[Instance]):
+    '''
+
+    :param inventory: Объект, который заполняется и отдается в конце скрипта
+    :param instances: Список инстансов
+    '''
+    for instance in instances:
+        instance_name = instance.get_instance_name()
+        hostvars = instance.get_hostvar()
+        groups = instance.get_groups()
+        ip_addr = get_kvm_dhcp_ip_by_name(instance_name, hostvars[instance_name]["os_type"])
+
+        inventory["_meta"]["hostvars"][instance_name] = hostvars[instance_name]
+        inventory["_meta"]["hostvars"][instance_name]["ansible_ssh_host"] = ip_addr
+        inventory["all"].append(instance_name)
+
+        for group in groups:
+            if group not in inventory:
+                inventory[group] = []
+            inventory[group].append(instance_name)
+
+    inventory["all"] = list(set(inventory["all"]))
+
+def get_kvm_dhcp_ip_by_name(instance_name: str, os_type: str) -> str:
+    '''
+
+    :param instance_name: Имя хоста по которому получаем ip
+    :param os_type: Должен быть укащан в инвентаре. Либо debian, либо rhel
+    :return: Возвращает ansible_ssh_host
+    '''
+
+    conn = libvirt.open("qemu:///system")
+    interface_addrs = conn.lookupByName(instance_name).interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT)
+    if os_type == "debian":
+        return interface_addrs["enp1s0"]["addrs"][0]["addr"]
+    elif os_type == "rhel":
+        return interface_addrs["eth0"]["addrs"][0]["addr"]
+
+def main():
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    file_path = f"{script_dir}/hosts.yaml"
+    inventory = { "_meta": { "hostvars": {} }, "all": [] }
+
+    instances = parse_custom_inventory(file_path)
+    fill_inventory(inventory, instances)
+    print(json.dumps(inventory))
+
+if __name__ == "__main__":
+    main()

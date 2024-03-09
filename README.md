@@ -1,6 +1,9 @@
 # INFRA-PLAYBOOK
 
+# Hostvar os_type is required
+
 ## Run plays
 ```commandline
-ansible-playbook -i inventory.py -l all main.yaml -t tags_name
+ansible-playbook -i inventory/inventory.py -l hosts main.yaml -t tags_name
 ```
+

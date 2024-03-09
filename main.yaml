@@ -1,18 +1,17 @@
 ---
 - name: System dummy playbook
   hosts: all
-  gather_facts: yes
-  remote_user: ahmed
+  gather_facts: no
+  remote_user: root
+  become: yes
+  tags: common-ops
 
+  pre_tasks:
+    - name: Gathering Facts
+      setup:
+      tags: [ never, gf ]
 
   roles:
     - { role: rhel-common, tags: common, when: ansible_os_family == "RedHat" }
     - { role: ubuntu-common, tags: common, when: ansible_os_family == "Debian" }
-
-- name: System dummy playbook
-  hosts: all
-  gather_facts: yes
-  remote_user: ahmed
-
-  roles:
-    - { role: promerheus, tags: prometheus }
+    - { role: docker, tags: [ common, docker ] }

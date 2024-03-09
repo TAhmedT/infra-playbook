@@ -3,8 +3,6 @@
     name: "*"
     update_cache: yes
     state: latest
-  become: true
-  become_user: root
 
 - name: Install third-party packages
   yum:
@@ -14,5 +12,3 @@
     - vim
     - bash-completion
     - python3
-  become: true
-  become_user: root

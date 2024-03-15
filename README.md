@@ -1,6 +1,5 @@
 # INFRA-PLAYBOOK
 
-# Hostvar os_type is required
 
 ## Run plays
 ```commandline

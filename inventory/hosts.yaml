@@ -1,8 +1,8 @@
 ---
-prometheus-centos-1:
-  groups: [ monitoring, prometheus ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_ssh_host: 1.1.1.1 }
-
-proxmox-ub-01:
-  groups: [ proxmox ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_ssh_host: 1.1.1.2 }
+#proxmox-1:
+#  groups: [ proxmox ]
+#  hostvars: { ansible_ssh_user: root, ansible_ssh_host: 192.168.120.8 }
+#
+#proxmox-2:
+#  groups: [ proxmox ]
+#  hostvars: { ansible_ssh_user: root, ansible_ssh_host: 192.168.121.10 }

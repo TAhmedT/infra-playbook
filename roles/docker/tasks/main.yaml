@@ -1,0 +1,28 @@
+- name: Install docker for debian-like
+  include_tasks: ubuntu.yaml
+  when: ansible_os_family == "Debian"
+
+- name: Install docker for rhel-like
+  include_tasks: centos.yaml
+  when: ansible_os_family == "RedHat"
+
+- name: Install docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: Add default user to docker group
+  user:
+    name: "{{ default_user }}"
+    groups: docker
+    append: yes
+
+- name: Run hello world image
+  shell: docker run hello-world
+  register: docker_check
+
+- name: Test docker work
+  fail:
+    msg: "Docker doesn't install"
+  when: docker_check.rc != 0

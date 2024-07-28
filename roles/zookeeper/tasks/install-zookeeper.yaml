@@ -1,0 +1,37 @@
+- name: Copy system zookeeper service
+  copy:
+    src: files/zookeeper.service
+    dest: /etc/systemd/system/zookeeper.service
+  notify:
+    - Daemon reload
+    - Restart zookeeper
+
+- name: Copy zookeeper config
+  copy:
+    src: files/zoo.cfg
+    dest: /opt/zookeeper/conf/
+    owner: zookeeper
+    group: zookeeper
+  notify: Restart zookeeper
+
+- name: Template dynamic config
+  template:
+    src: templates/zoo.cfg.dynamic.j2
+    dest: /opt/zookeeper/conf/zoo.cfg.dynamic
+    owner: zookeeper
+    group: zookeeper
+  notify: Restart zookeeper
+
+- name: Create server id file
+  file:
+    path: /var/lib/zookeeper/myid
+    state: file
+    owner: zookeeper
+    group: zookeeper
+
+- name: Add line into file
+  lineinfile:
+    path: /var/lib/zookeeper/myid
+    line: "{{ zookeeper_server_id }}"
+    state: present
+  notify: Restart zookeeper

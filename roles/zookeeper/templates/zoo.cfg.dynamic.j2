@@ -1,0 +1,5 @@
+{% set ns = namespace(counter=1) %}
+{% for server_ip in zookeeper_cluster_ip %}
+server.{{ ns.counter }}={{ server_ip }}:2888:3888
+{% set ns.counter = ns.counter + 1 %}
+{% endfor %}

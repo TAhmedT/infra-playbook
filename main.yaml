@@ -1,17 +1,12 @@
 ---
 - name: System dummy playbook
   hosts: all
-  gather_facts: no
   remote_user: root
   become: yes
-  tags: common-ops
-
-  pre_tasks:
-    - name: Gathering Facts
-      setup:
-      tags: [ never, gf ]
 
   roles:
-    - { role: rhel-common, tags: common, when: ansible_os_family == "RedHat" }
-    - { role: ubuntu-common, tags: common, when: ansible_os_family == "Debian" }
+    - { role: rhel-common, tags: [ common, rhel-common ], when: ansible_os_family == "RedHat" }
+    - { role: ubuntu-common, tags: [ common, ubuntu-common ], when: ansible_os_family == "Debian" }
     - { role: docker, tags: [ common, docker ] }
+    - { role: zookeeper, tags: [ zookeeper ] }
+    - { role: clickhouse, tags: [ clickhouse ] }

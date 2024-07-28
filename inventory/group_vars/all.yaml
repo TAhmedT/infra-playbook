@@ -1,2 +1,4 @@
 default_user: ahmed
 default_group: ahmed
+
+zookeeper_version: 3.9.2

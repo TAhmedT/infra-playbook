@@ -1,0 +1,41 @@
+- name: Download clickhouse key
+  get_url:
+    url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+    dest: /tmp/clickhouse.key
+
+- name: Convert key to GPG format
+  shell: cat /tmp/clickhouse.key | gpg --dearmor | tee /etc/apt/keyrings/clickhouse.gpg
+
+- name: Cleanup
+  file:
+    path: /tmp/clickhouse.key
+    state: absent
+
+- name: Add clickhouse repo
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/clickhouse.gpg] https://packages.clickhouse.com/deb stable main"
+    state: present
+    filename: clickhouse
+
+- name: Install clickhouse
+  apt:
+    name:
+      - clickhouse-server
+      - clickhouse-client
+    state: present
+    update_cache: yes
+
+- name: Start and enable clickhouse-server
+  systemd:
+    name: clickhouse-server
+    state: started
+    enabled: yes
+
+- name: Template config.xml
+  template:
+    src: templates/config.xml.j2
+    dest: /etc/clickhouse-server/config.xml
+    owner: clickhouse
+    group: clickhouse
+    mode: 0400
+  notify: Restart clickhouse

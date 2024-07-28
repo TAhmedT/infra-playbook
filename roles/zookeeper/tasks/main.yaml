@@ -1,0 +1,18 @@
+- name: Check zookeeper version
+  shell: echo "status" | nc  localhost 2181 | head -n 1 | awk '{ print $3}' | cut -d "-" -f 1
+  register: check_zookeeper_version
+
+- name: Check versions
+  shell: "test '{{ zookeeper_version }}' = '{{ check_zookeeper_version.stdout }}'"
+  register: check_version
+  ignore_errors: yes
+
+- include_tasks: setup-and-download.yaml
+  when: check_version.rc != 0
+
+- include_tasks: install-zookeeper.yaml
+
+- name: Cleanup
+  file:
+    path: /tmp/zookeeper.tar.gz
+    state: absent

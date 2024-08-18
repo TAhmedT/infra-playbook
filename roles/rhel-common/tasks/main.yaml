@@ -5,6 +5,7 @@
     state: latest
   async: 3600
   poll: 60
+  when: init_system
 
 - name: Install third-party packages
   yum:

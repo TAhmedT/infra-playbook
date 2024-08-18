@@ -7,20 +7,32 @@
 #  groups: [ proxmox ]
 #  hostvars: { ansible_ssh_user: root, ansible_ssh_host: 192.168.121.10 }
 
-clickhouse-1:
-  groups: [ clickhouse ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.30, shard_host: 192.168.122.31 }
+#clickhouse-1:
+#  groups: [ clickhouse ]
+#  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.30, shard_host: 192.168.122.31 }
+#
+#clickhouse-2:
+#  groups: [ clickhouse ]
+#  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.31, shard_host: 192.168.122.30 }
+#
+#zookeeper-1:
+#  groups: [ clickhouse ]
+#  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.32, zookeeper_cluster_ip: [ 192.168.122.32, 192.168.122.33 ],
+#              zookeeper_server_id: 1 }
+#
+#zookeeper-2:
+#  groups: [ clickhouse ]
+#  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.33, zookeeper_cluster_ip: [ 192.168.122.32, 192.168.122.33 ],
+#              zookeeper_server_id: 2 }
 
-clickhouse-2:
-  groups: [ clickhouse ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.31, shard_host: 192.168.122.30 }
+semaphore:
+  groups: [ semaphore ]
+  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.10 }
 
-zookeeper-1:
-  groups: [ clickhouse ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.32, zookeeper_cluster_ip: [ 192.168.122.32, 192.168.122.33 ],
-              zookeeper_server_id: 1 }
+jenkins:
+  groups: [ jenkins ]
+  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.11 }
 
-zookeeper-2:
-  groups: [ clickhouse ]
-  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.33, zookeeper_cluster_ip: [ 192.168.122.32, 192.168.122.33 ],
-              zookeeper_server_id: 2 }
+hashicorp_vault:
+  groups: [ vault ]
+  hostvars: { ansible_ssh_user: ahmed, ansible_host: 192.168.122.12 }
